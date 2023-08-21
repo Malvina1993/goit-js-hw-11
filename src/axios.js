@@ -4,7 +4,7 @@ const formEl = document.querySelector('.search-form');
 
 
 async function fetchUrl(page, perPage) {
-    return data = await axios.get('https://pixabay.com/api/', {
+    const data = await axios.get('https://pixabay.com/api/', {
         params: {
         key: `${KEY}`,
         q: `${formEl.elements.searchQuery.value}`,
@@ -14,7 +14,9 @@ async function fetchUrl(page, perPage) {
         page: `${page}`,
         per_page: `${perPage}`,
         }
-});
+    });
+
+    return data;
 }
 
 export { fetchUrl };
