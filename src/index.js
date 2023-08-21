@@ -10,6 +10,7 @@ const imgContainer = document.querySelector('.gallery');
 const moreLoad = document.querySelector('.load-more');
 
 
+
 formEl.addEventListener('submit', searchData);
 
 
@@ -18,7 +19,9 @@ let page = 1;
 let perPage = 40;
 let ligtbox = new SimpleLightbox('.gallery a'); 
 
-moreLoad.addEventListener('click', loadMore);
+window.addEventListener('scroll', loadMore);
+
+
 
 function searchData(evn) {
     evn.preventDefault();
@@ -44,7 +47,7 @@ function searchData(evn) {
             behavior: "smooth",
             });
             ligtbox.refresh();
-            moreLoad.style.display = 'block';
+            
 
         }).catch(error => console.log(error))
         .finally(() => formEl.reset());
@@ -54,27 +57,39 @@ function searchData(evn) {
 
 
 function loadMore() {
-    moreLoad.style.display = 'none';
-    page += 1;
+   
+    
 
-    fetchUrl(page, perPage)
-        .then(({ data }) => { 
-            // console.log(data.totalHits);
+    const docRect = document.documentElement.getBoundingClientRect();
+
+    if (docRect.bottom < document.documentElement.clientHeight + 150) {
+        window.removeEventListener('scroll', loadMore);
+       fetchUrl(page, perPage)
+           .then(({ data }) => { 
+            
+
+            page += 1;
+            // console.log(page, perPage);
             const imagData = getDataImg(data);
             imgContainer.insertAdjacentHTML('beforeend', createMarcupImg(imagData));
              ligtbox.refresh();
-            moreLoad.style.display = 'block';
+            
             if (perPage !== 40) {
-                moreLoad.style.display = 'none';
-                document.querySelector('body').insertAdjacentHTML('beforeend',"We're sorry, but you've reached the end of search results.");
+                
+                document.querySelector('body').insertAdjacentHTML('beforeend', "We're sorry, but you've reached the end of search results.");
                 return; 
             };
 
             if ((perPage * page + perPage) > data.totalHits) {
                 perPage = data.totalHits - perPage * page;
-            };
+               };
+            
+            window.addEventListener('scroll', loadMore);
 
-        }).catch(error => console.log(error));
+
+        }).catch(error => console.log(error)); 
+    }
+    
     
 }
 
