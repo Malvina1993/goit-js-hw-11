@@ -16,7 +16,7 @@ async function fetchUrl(page, perPage) {
         }
     });
 
-    return ({ data });
+    return  data ;
 }
 
 export { fetchUrl };
