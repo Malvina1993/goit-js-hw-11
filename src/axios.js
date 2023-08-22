@@ -2,7 +2,7 @@ import axios from "axios";
 const KEY = '38922670-691cd2065c98d9555aa737c91';
 const formEl = document.querySelector('.search-form');
 
-async function fetchUrl(page, perPage, value) {
+async function fetchUrl(page, value) {
     try {
       const data = await axios.get('https://pixabay.com/api/', {
         params: {
@@ -12,7 +12,7 @@ async function fetchUrl(page, perPage, value) {
         orientation: "horizontal",
         safesearch: "true",
         page: `${page}`,
-        per_page: `${perPage}`,
+        per_page: 40,
           }
         
       }); 

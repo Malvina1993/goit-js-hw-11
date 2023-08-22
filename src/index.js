@@ -7,8 +7,8 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 
 const formEl = document.querySelector('.search-form');
 const imgContainer = document.querySelector('.gallery');
-const moreLoad = document.querySelector('.load-more');
-
+const sorryMsg = document.querySelector('.sorry-mesg');
+const loader = document.querySelector('.loader');
 
 
 formEl.addEventListener('submit', searchData);
@@ -16,7 +16,7 @@ formEl.addEventListener('submit', searchData);
 
 
 let page = 1;
-let perPage = 40;
+
 let ligtbox = new SimpleLightbox('.gallery a'); 
 let searchValue = '';
 
@@ -27,11 +27,14 @@ window.addEventListener('scroll', loadMore);
 async function searchData(evn) {
     evn.preventDefault();
     searchValue = formEl.elements.searchQuery.value;
+
+    loader.style.display = 'block';
     try {
-        return await fetchUrl(page, perPage, searchValue)
+        return await fetchUrl(page, searchValue)
             .then(({ data }) => {
                 // console.log(data);
                 const imagData = getDataImg(data);
+                loader.style.display = 'none';
                 if (imagData.length === 0) {
                     Notify.failure('Sorry, there are no images matching your search query. Please try again.');
                     formEl.reset();
@@ -50,7 +53,6 @@ async function searchData(evn) {
                     behavior: "smooth",
                 });
                 ligtbox.refresh();
-                page += 1;
             })
     } catch (error) { 
       console.log(error)
@@ -64,32 +66,28 @@ async function searchData(evn) {
 
 
 function loadMore() {
-  
     const docRect = document.documentElement.getBoundingClientRect();
-
+    loader.style.display = 'block';
     if (docRect.bottom < document.documentElement.clientHeight + 150) {
         window.removeEventListener('scroll', loadMore);
-
-       fetchUrl(page, perPage, searchValue)
+        
+        page += 1;
+       fetchUrl(page, searchValue)
            .then(({ data }) => { 
-            
-
-            page += 1;
-            // console.log(page, perPage);
-            const imagData = getDataImg(data);
+                       
+            // console.log(data.totalHits);
+               const imagData = getDataImg(data);
+               loader.style.display = 'none';
             imgContainer.insertAdjacentHTML('beforeend', createMarcupImg(imagData));
              ligtbox.refresh();
-            
-            if (perPage !== 40) {
+               
+            if (page*40 > data.totalHits) {
                 
-                document.querySelector('body').insertAdjacentHTML('beforeend', "We're sorry, but you've reached the end of search results.");
+                sorryMsg.style.display = 'block';
                 return; 
             };
 
-            if ((perPage * page + perPage) > data.totalHits) {
-                perPage = data.totalHits - perPage * page;
-               };
-            
+               
             window.addEventListener('scroll', loadMore);
 
 
