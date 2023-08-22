@@ -1,23 +1,29 @@
 import axios from "axios";
 const KEY = '38922670-691cd2065c98d9555aa737c91';
 const formEl = document.querySelector('.search-form');
-formEl.addEventListener('submit', fetchUrl);
 
-async function fetchUrl(page, perPage, evn) {
-    evn.preventDefault();
-    const data = await axios.get('https://pixabay.com/api/', {
+async function fetchUrl(page, perPage, value) {
+    try {
+      const data = await axios.get('https://pixabay.com/api/', {
         params: {
         key: `${KEY}`,
-        q: `${formEl.elements.searchQuery.value}`,
+        q: value,
         image_type: "photo",
         orientation: "horizontal",
         safesearch: "true",
         page: `${page}`,
         per_page: `${perPage}`,
-        }
-    });
+          }
+        
+      }); 
+        
+      return  data ;    
+    } catch (err){
+        console.log(err);
+   }
+    
 
-    return  data ;
+    
 }
 
 export { fetchUrl };

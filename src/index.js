@@ -11,51 +11,57 @@ const moreLoad = document.querySelector('.load-more');
 
 
 
-// formEl.addEventListener('submit', searchData);
+formEl.addEventListener('submit', searchData);
 
 
 
 let page = 1;
 let perPage = 40;
 let ligtbox = new SimpleLightbox('.gallery a'); 
+let searchValue = '';
 
 window.addEventListener('scroll', loadMore);
 
 
 
-// function searchData(evn) {
-    
-    
-    fetchUrl(page = 1, perPage = 40)
-        .then(({ data })  => { 
-            // console.log(data);
-            const imagData = getDataImg(data);
-            
-            if (imagData.length === 0) {
-                Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-                formEl.reset();
-                return;
-            };
-            Notify.success(`Hooray! We found ${data.totalHits} images.`);
-            // console.log(imagData);
-            imgContainer.innerHTML = createMarcupImg(imagData);
-            const { height: cardHeight } = document
-            .querySelector(".gallery")
-            .firstElementChild.getBoundingClientRect();
+async function searchData(evn) {
+    evn.preventDefault();
+    searchValue = formEl.elements.searchQuery.value;
+    try {
+        return await fetchUrl(page, perPage, searchValue)
+            .then(({ data }) => {
+                // console.log(data);
+                const imagData = getDataImg(data);
+                if (imagData.length === 0) {
+                    Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+                    formEl.reset();
+                    return;
+                };
+                Notify.success(`Hooray! We found ${data.totalHits} images.`);
 
-            window.scrollBy({
-            top: cardHeight * 2,
-            behavior: "smooth",
-            });
-            ligtbox.refresh();
-            
+                // console.log(imagData);
+                imgContainer.innerHTML = createMarcupImg(imagData);
+                const { height: cardHeight } = document
+                    .querySelector(".gallery")
+                    .firstElementChild.getBoundingClientRect();
 
-        }).catch(error => console.log(error))
-        .finally(() => formEl.reset());
+                window.scrollBy({
+                    top: cardHeight * 2,
+                    behavior: "smooth",
+                });
+                ligtbox.refresh();
+                page += 1;
+            })
+    } catch (error) { 
+      console.log(error)
+ 
+    } finally {
+       formEl.reset() 
+    };
     
     
-// }
-console.log('sdfghjkl');
+}
+
 
 function loadMore() {
   
@@ -63,7 +69,8 @@ function loadMore() {
 
     if (docRect.bottom < document.documentElement.clientHeight + 150) {
         window.removeEventListener('scroll', loadMore);
-       fetchUrl(page, perPage)
+
+       fetchUrl(page, perPage, searchValue)
            .then(({ data }) => { 
             
 
