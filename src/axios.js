@@ -1,9 +1,10 @@
 import axios from "axios";
 const KEY = '38922670-691cd2065c98d9555aa737c91';
 const formEl = document.querySelector('.search-form');
+formEl.addEventListener('submit', fetchUrl);
 
-
-async function fetchUrl(page, perPage) {
+async function fetchUrl(page, perPage, evn) {
+    evn.preventDefault();
     const data = await axios.get('https://pixabay.com/api/', {
         params: {
         key: `${KEY}`,

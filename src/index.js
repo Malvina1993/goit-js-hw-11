@@ -11,7 +11,7 @@ const moreLoad = document.querySelector('.load-more');
 
 
 
-formEl.addEventListener('submit', searchData);
+// formEl.addEventListener('submit', searchData);
 
 
 
@@ -23,19 +23,20 @@ window.addEventListener('scroll', loadMore);
 
 
 
-function searchData(evn) {
-    evn.preventDefault();
+// function searchData(evn) {
+    
     
     fetchUrl(page = 1, perPage = 40)
         .then(({ data })  => { 
             // console.log(data);
             const imagData = getDataImg(data);
-            Notify.success(`Hooray! We found ${data.totalHits} images.`);
+            
             if (imagData.length === 0) {
                 Notify.failure('Sorry, there are no images matching your search query. Please try again.');
                 formEl.reset();
                 return;
             };
+            Notify.success(`Hooray! We found ${data.totalHits} images.`);
             // console.log(imagData);
             imgContainer.innerHTML = createMarcupImg(imagData);
             const { height: cardHeight } = document
@@ -53,13 +54,11 @@ function searchData(evn) {
         .finally(() => formEl.reset());
     
     
-}
-
+// }
+console.log('sdfghjkl');
 
 function loadMore() {
-   
-    
-
+  
     const docRect = document.documentElement.getBoundingClientRect();
 
     if (docRect.bottom < document.documentElement.clientHeight + 150) {
