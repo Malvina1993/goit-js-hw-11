@@ -26,13 +26,17 @@ window.addEventListener('scroll', loadMore);
 
 async function searchData(evn) {
     evn.preventDefault();
-    searchValue = formEl.elements.searchQuery.value;
-
+    searchValue = formEl.elements.searchQuery.value.trim();
+    if (searchValue === '') {
+               return;
+        }
     loader.style.display = 'block';
     try {
         return await fetchUrl(page, searchValue)
             .then(({ data }) => {
                 // console.log(data);
+                
+
                 const imagData = getDataImg(data);
                 loader.style.display = 'none';
                 if (imagData.length === 0) {
